@@ -11,45 +11,39 @@ class ProductFeatureTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function user_can_create_a_product()
+    public function user_can_add_edit_and_delete_product()
     {
+        // Create product
         $response = $this->post(route('products.store'), [
-            'name' => 'Test Product',
-            'quantity' => 10,
-            'description' => 'Some description',
+            'name' => 'Feature Product',
+            'quantity' => 3,
             'status' => 'active',
         ]);
-
         $response->assertRedirect(route('products.index'));
-        $this->assertDatabaseHas('products', ['name' => 'Test Product', 'quantity' => 10]);
-    }
+        $this->assertDatabaseHas('products', ['name' => 'Feature Product']);
 
-    /** @test */
-    public function user_can_edit_a_product()
-    {
-        $product = Product::factory()->create();
+        $product = Product::first();
 
+        // Update product
         $response = $this->put(route('products.update', $product), [
-            'name' => 'Updated Name',
-            'quantity' => 5,
-            'status' => 'inactive',
+            'name' => 'Updated Feature Product',
+            'quantity' => 10,
+            'status' => 'active',
         ]);
-
         $response->assertRedirect(route('products.index'));
-        $this->assertDatabaseHas('products', ['id' => $product->id, 'name' => 'Updated Name', 'quantity' => 5]);
-    }
+        $this->assertDatabaseHas('products', ['name' => 'Updated Feature Product']);
 
-    /** @test */
-    public function user_can_increment_and_decrement_quantity_via_routes()
-    {
-        $product = Product::factory()->create(['quantity' => 3]);
+        // Increment quantity
+        $response = $this->patch(route('products.increment', $product));
+        $this->assertEquals(11, $product->fresh()->quantity);
 
-        // Increment
-        $this->patch(route('products.increment', $product));
-        $this->assertEquals(4, $product->fresh()->quantity);
+        // Decrement quantity
+        $response = $this->patch(route('products.decrement', $product));
+        $this->assertEquals(10, $product->fresh()->quantity);
 
-        // Decrement
-        $this->patch(route('products.decrement', $product));
-        $this->assertEquals(3, $product->fresh()->quantity);
+        // Delete product
+        $response = $this->delete(route('products.destroy', $product));
+        $response->assertRedirect(route('products.index'));
+        $this->assertDeleted($product);
     }
 }
