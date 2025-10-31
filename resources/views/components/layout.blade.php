@@ -12,6 +12,10 @@
     </style>
 </head>
 <body>
+
+    <x-flash-success />
+    <x-flash-errors />
+    
     <div class="holy-grail">
         <header class="header">
             <h1>MyStore Logo</h1>

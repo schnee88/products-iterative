@@ -8,3 +8,6 @@ Route::get('/', function () {
 
 
 Route::resource('products', ProductController::class);
+
+Route::patch('products/{product}/increase', [ProductController::class, 'increaseQuantity'])->name('products.increase');
+Route::patch('products/{product}/decrease', [ProductController::class, 'decreaseQuantity'])->name('products.decrease');
