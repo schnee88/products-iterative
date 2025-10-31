@@ -32,14 +32,30 @@
                         <td>{{ $product->status }}</td>
                         <td>{{ $product->expiration_date?->format('Y-m-d') ?? 'N/A' }}</td>
                         <td>
-                            <a href="{{ route('products.show', $product) }}">View</a>
-                            <a href="{{ route('products.edit', $product) }}">Edit</a>
-                            <form action="{{ route('products.destroy', $product) }}" method="POST" style="display: inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
-                            </form>
-                        </td>
+    <a href="{{ route('products.show', $product) }}">View</a>
+    <a href="{{ route('products.edit', $product) }}">Edit</a>
+
+    {{-- Increment quantity --}}
+    <form action="{{ route('products.increment', $product) }}" method="POST" style="display: inline;">
+        @csrf
+        @method('PATCH')
+        <button type="submit" class="btn-action">+</button>
+    </form>
+
+    {{-- Decrement quantity --}}
+    <form action="{{ route('products.decrement', $product) }}" method="POST" style="display: inline;">
+        @csrf
+        @method('PATCH')
+        <button type="submit" class="btn-action">-</button>
+    </form>
+
+    {{-- Delete product --}}
+    <form action="{{ route('products.destroy', $product) }}" method="POST" style="display: inline;">
+        @csrf
+        @method('DELETE')
+        <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
+    </form>
+</td>
                     </tr>
                 @endforeach
             </tbody>
