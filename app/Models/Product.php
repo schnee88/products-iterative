@@ -21,11 +21,17 @@ class Product extends Model
         'expiration_date' => 'date',
     ];
 
+    // Add tags relationship
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
+    }
+
+    // Your existing methods...
     public function increaseQuantity(int $amount = 1): bool
     {
         $this->increment('quantity', $amount);
         
-        // Update status if it was out of stock
         if ($this->status === 'out_of_stock' && $this->quantity > 0) {
             $this->update(['status' => 'active']);
         }
@@ -36,12 +42,11 @@ class Product extends Model
     public function decreaseQuantity(int $amount = 1): bool
     {
         if ($this->quantity < $amount) {
-            return false; // Cannot decrease below 0
+            return false;
         }
         
         $this->decrement('quantity', $amount);
         
-        // Auto-update status if quantity reaches 0
         if ($this->quantity === 0) {
             $this->update(['status' => 'out_of_stock']);
         }
@@ -52,5 +57,28 @@ class Product extends Model
     public function safeDecrement(): bool
     {
         return $this->decreaseQuantity(1);
+    }
+
+        public function syncTags(array $tagNames)
+    {
+        $tagIds = [];
+    
+        foreach ($tagNames as $tagName) {
+            if (trim($tagName) !== '') {
+                $tag = Tag::firstOrCreate(
+                    ['name' => trim($tagName)],
+                    ['color' => $this->generateRandomColor()]
+                );
+                $tagIds[] = $tag->id;
+            }
+        }
+    
+        $this->tags()->sync($tagIds);
+    }
+
+    private function generateRandomColor()
+    {
+        $colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16', '#f97316', '#6366f1'];
+        return $colors[array_rand($colors)];
     }
 }
