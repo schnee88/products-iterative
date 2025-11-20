@@ -1,15 +1,6 @@
 <x-layout>
     <h1>Product Details</h1>
 
-    {{-- Flash notifications --}}
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
-    @endif
-
     <div class="product-details">
         <div class="detail-row">
             <strong>ID:</strong>
@@ -23,20 +14,23 @@
 
         <div class="detail-row">
             <strong>Quantity:</strong>
-            <span>{{ $product->quantity }}</span>
+            <span class="quantity-{{ $product->id }}">{{ $product->quantity }}</span>
 
-            {{-- Increment button --}}
-            <form action="{{ route('products.increment', $product) }}" method="POST">
-    @csrf
-    @method('PATCH')
-    <button type="submit">+</button>
-</form>
+            {{-- AJAX Increment button --}}
+            <button type="button" 
+                    class="btn-increase btn-action" 
+                    data-product-id="{{ $product->id }}"
+                    title="Increase Quantity">
+                +
+            </button>
 
-<form action="{{ route('products.decrement', $product) }}" method="POST">
-    @csrf
-    @method('PATCH')
-    <button type="submit">-</button>
-</form>
+            {{-- AJAX Decrement button --}}
+            <button type="button" 
+                    class="btn-decrease btn-action" 
+                    data-product-id="{{ $product->id }}"
+                    title="Decrease Quantity">
+                -
+            </button>
         </div>
 
         <div class="detail-row">
@@ -51,7 +45,7 @@
 
         <div class="detail-row">
             <strong>Status:</strong>
-            <span>{{ ucfirst(str_replace('_', ' ', $product->status)) }}</span>
+            <span class="status-{{ $product->id }}">{{ ucfirst(str_replace('_', ' ', $product->status)) }}</span>
         </div>
 
         <div class="detail-row">
@@ -75,36 +69,4 @@
             <button type="submit" onclick="return confirm('Are you sure you want to delete this product?')" class="btn-delete">Delete</button>
         </form>
     </div>
-
-    {{-- Simple CSS for buttons and flash messages --}}
-    <style>
-        .btn-action {
-            padding: 2px 6px;
-            margin-left: 4px;
-            cursor: pointer;
-        }
-        .alert {
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-        }
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        .form-actions a, .form-actions button {
-            margin-right: 10px;
-            text-decoration: none;
-        }
-        .form-actions .btn-delete {
-            color: red;
-            border: none;
-            background: none;
-            cursor: pointer;
-        }
-    </style>
 </x-layout>

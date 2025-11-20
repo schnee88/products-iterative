@@ -9,5 +9,8 @@ Route::get('/', function () {
 
 Route::resource('products', ProductController::class);
 
-Route::patch('products/{product}/increment', [ProductController::class, 'increaseQuantity'])->name('products.increment');
-Route::patch('products/{product}/decrement', [ProductController::class, 'decreaseQuantity'])->name('products.decrement');
+Route::post('products/{product}/increase-quantity', [ProductController::class, 'increaseQuantity'])->name('products.increase-quantity');
+Route::post('products/{product}/decrease-quantity', [ProductController::class, 'decreaseQuantity'])->name('products.decrease-quantity');
+
+Route::post('products/{product}/increment', [ProductController::class, 'increaseQuantity'])->name('products.increment');
+Route::post('products/{product}/decrement', [ProductController::class, 'decreaseQuantity'])->name('products.decrement');

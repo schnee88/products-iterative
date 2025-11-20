@@ -11,7 +11,7 @@ class ProductFeatureTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function user_can_add_edit_and_delete_product()
+    public function test_user_can_add_edit_and_delete_product()
     {
         // Create product
         $response = $this->post(route('products.store'), [

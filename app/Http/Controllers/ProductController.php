@@ -89,19 +89,47 @@ class ProductController extends Controller
             ->with('success', 'Product deleted successfully!');
     }
 
-    public function increaseQuantity(Product $product)
+    // In ProductController.php
+
+public function increaseQuantity(Product $product)
 {
-    $product->increment('quantity'); // +1
+    $product->increaseQuantity();
+    
+    if (request()->ajax()) {
+        return response()->json([
+            'success' => true,
+            'message' => 'Quantity increased successfully!',
+            'quantity' => $product->fresh()->quantity,
+            'status' => $product->fresh()->status
+        ]);
+    }
+    
     return redirect()->back()->with('success', 'Quantity increased successfully!');
 }
 
 public function decreaseQuantity(Product $product)
 {
-    if($product->quantity > 0) {
-        $product->decrement('quantity'); // -1
+    if ($product->decreaseQuantity()) {
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Quantity decreased successfully!',
+                'quantity' => $product->fresh()->quantity,
+                'status' => $product->fresh()->status
+            ]);
+        }
+        
         return redirect()->back()->with('success', 'Quantity decreased successfully!');
     }
 
+    if (request()->ajax()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Quantity cannot go below 0.',
+            'quantity' => $product->fresh()->quantity
+        ], 422);
+    }
+    
     return redirect()->back()->with('error', 'Quantity cannot go below 0.');
 }
 

@@ -19,14 +19,14 @@ class ProductFactory extends Factory
 
     protected $model = Product::class;
 
-    public function definition(): array
+    public function definition()
     {
         return [
-            'name' => $this->faker->words(3, true),
-            'quantity' => $this->faker->numberBetween(1, 100),
-            'description' => $this->faker->sentence(10),
-            'expiration_date' => $this->faker->dateTimeBetween('now', '+1 year')->format('Y-m-d'),
-            'status' => $this->faker->randomElement(['available', 'out_of_stock', 'discontinued']),
+            'name' => $this->faker->word,
+            'quantity' => $this->faker->numberBetween(0, 100),
+            'description' => $this->faker->sentence,
+            'expiration_date' => $this->faker->optional(0.7)->dateTimeBetween('now', '+1 year'), // 70% have date, 30% null
+            'status' => $this->faker->randomElement(['active', 'inactive', 'out_of_stock']),
         ];
     }
 }
