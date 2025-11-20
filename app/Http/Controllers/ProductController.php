@@ -62,21 +62,30 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'quantity' => 'required|integer|min:0',
-            'description' => 'nullable|string',
-            'expiration_date' => 'nullable|date',
-            'status' => 'required|in:active,inactive,out_of_stock',
-        ]);
+    // In app/Http/Controllers/ProductController.php
 
-        $product->update($validated);
+public function update(Request $request, Product $product)
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'quantity' => 'required|integer|min:0',
+        'description' => 'nullable|string',
+        'expiration_date' => 'nullable|date',
+        'status' => 'required|in:active,inactive,out_of_stock',
+        'tags' => 'nullable|array',
+        'tags.*' => 'string|max:255'
+    ]);
 
-        return redirect()->route('products.index')
-            ->with('success', 'Product updated successfully!');
+    $product->update($validated);
+    
+    // Sync tags if they are provided
+    if ($request->has('tags')) {
+        $product->syncTags($request->tags);
     }
+
+    return redirect()->route('products.index')
+        ->with('success', 'Product updated successfully!');
+}
 
     /**
      * Remove the specified resource from storage.
